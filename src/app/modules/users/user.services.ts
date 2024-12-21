@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errorHandlers/AppError';
-import { TUser } from './user.interface';
-import { UserModel } from './user.mode';
+import { userSearchableFields } from './user.constant';
+import { IUser } from './user.interface';
+import { UserModel } from './user.model';
 import httpStatus from 'http-status';
 
-const createUserIntoDB = async (payload: TUser) => {
+const createUserIntoDB = async (payload: IUser) => {
   //set default user role
 
   payload.role = 'user';
@@ -23,8 +25,14 @@ const createUserIntoDB = async (payload: TUser) => {
   }
 };
 
-const findAllUsers = async () => {
-  const result = UserModel.find().sort({ _id: -1 });
+const findAllUsers = async (query: Record<string, unknown>) => {
+  const userQuery = new QueryBuilder(UserModel.find(), query)
+    .search(userSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const result = await userQuery.modelQuery;
   return result;
 };
 
