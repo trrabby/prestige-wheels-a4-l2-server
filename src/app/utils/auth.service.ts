@@ -2,15 +2,15 @@ import bcrypt from 'bcrypt';
 import httpStatus from 'http-status';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
-import { TLoginUser } from './auth.interface';
-import { createToken } from './auth.utils';
-import { UserModel } from '../users/user.model';
-import AppError from '../../errorHandlers/AppError';
+import AppError from '../../errors/AppError';
 import { sendEmail } from '../../utils/sendEmail';
+import { User } from '../user/user.model';
+import { TLoginUser } from './auth.interface';
+import { createToken, verifyToken } from './auth.utils';
 
 const loginUser = async (payload: TLoginUser) => {
   // checking if the user is exist
-  const user = await UserModel.isUserExistsByEmail(payload.email);
+  const user = await User.isUserExistsByCustomId(payload.id);
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
@@ -33,13 +33,13 @@ const loginUser = async (payload: TLoginUser) => {
 
   //checking if the password is correct
 
-  if (!(await UserModel.isPasswordMatched(payload?.password, user?.password)))
+  if (!(await User.isPasswordMatched(payload?.password, user?.password)))
     throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
 
   //create token and sent to the  client
 
   const jwtPayload = {
-    email: user.email,
+    userId: user.id,
     role: user.role,
   };
 
@@ -67,7 +67,7 @@ const changePassword = async (
   payload: { oldPassword: string; newPassword: string },
 ) => {
   // checking if the user is exist
-  const user = await UserModel.isUserExistsByEmail(userData.email);
+  const user = await User.isUserExistsByCustomId(userData.userId);
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
@@ -90,7 +90,7 @@ const changePassword = async (
 
   //checking if the password is correct
 
-  if (!(await UserModel.isPasswordMatched(payload.oldPassword, user?.password)))
+  if (!(await User.isPasswordMatched(payload.oldPassword, user?.password)))
     throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
 
   //hash new password
@@ -99,9 +99,9 @@ const changePassword = async (
     Number(config.bcrypt_salt_rounds),
   );
 
-  await UserModel.findOneAndUpdate(
+  await User.findOneAndUpdate(
     {
-      email: userData.email,
+      id: userData.userId,
       role: userData.role,
     },
     {
@@ -116,15 +116,12 @@ const changePassword = async (
 
 const refreshToken = async (token: string) => {
   // checking if the given token is valid
-  const decoded = jwt.verify(
-    token,
-    config.jwt_refresh_secret as string,
-  ) as JwtPayload;
+  const decoded = verifyToken(token, config.jwt_refresh_secret as string);
 
-  const { email, iat } = decoded;
+  const { userId, iat } = decoded;
 
   // checking if the user is exist
-  const user = await UserModel.isUserExistsByEmail(email);
+  const user = await User.isUserExistsByCustomId(userId);
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
@@ -145,33 +142,30 @@ const refreshToken = async (token: string) => {
 
   if (
     user.passwordChangedAt &&
-    UserModel.isJWTIssuedBeforePasswordChanged(
-      user.passwordChangedAt,
-      iat as number,
-    )
+    User.isJWTIssuedBeforePasswordChanged(user.passwordChangedAt, iat as number)
   ) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized !');
   }
 
   const jwtPayload = {
-    email: user.email,
+    userId: user.id,
     role: user.role,
   };
 
-  const refreshedAccessToken = createToken(
+  const accessToken = createToken(
     jwtPayload,
     config.jwt_access_secret as string,
     config.jwt_access_expires_in as string,
   );
 
   return {
-    refreshedAccessToken,
+    accessToken,
   };
 };
 
 const forgetPassword = async (userId: string) => {
   // checking if the user is exist
-  const user = await UserModel.isUserExistsByEmail(userId);
+  const user = await User.isUserExistsByCustomId(userId);
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
@@ -191,7 +185,7 @@ const forgetPassword = async (userId: string) => {
   }
 
   const jwtPayload = {
-    email: user.email,
+    userId: user.id,
     role: user.role,
   };
 
@@ -201,7 +195,7 @@ const forgetPassword = async (userId: string) => {
     '10m',
   );
 
-  const resetUILink = `${config.reset_pass_ui_link}?id=${user.email}&token=${resetToken} `;
+  const resetUILink = `${config.reset_pass_ui_link}?id=${user.id}&token=${resetToken} `;
 
   sendEmail(user.email, resetUILink);
 
@@ -209,11 +203,11 @@ const forgetPassword = async (userId: string) => {
 };
 
 const resetPassword = async (
-  payload: { email: string; newPassword: string },
+  payload: { id: string; newPassword: string },
   token: string,
 ) => {
   // checking if the user is exist
-  const user = await UserModel.isUserExistsByEmail(payload?.email);
+  const user = await User.isUserExistsByCustomId(payload?.id);
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
@@ -239,7 +233,8 @@ const resetPassword = async (
 
   //localhost:3000?id=A-0001&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJBLTAwMDEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDI4NTA2MTcsImV4cCI6MTcwMjg1MTIxN30.-T90nRaz8-KouKki1DkCSMAbsHyb9yDi0djZU3D6QO4
 
-  if (payload.email !== decoded.email) {
+  if (payload.id !== decoded.userId) {
+    console.log(payload.id, decoded.userId);
     throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden!');
   }
 
@@ -249,9 +244,9 @@ const resetPassword = async (
     Number(config.bcrypt_salt_rounds),
   );
 
-  await UserModel.findOneAndUpdate(
+  await User.findOneAndUpdate(
     {
-      email: decoded.email,
+      id: decoded.userId,
       role: decoded.role,
     },
     {
