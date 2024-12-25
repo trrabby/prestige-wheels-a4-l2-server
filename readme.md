@@ -1,8 +1,8 @@
-# Express Backend Project
+# Express Backend Specimen Project
 
 ## Overview
 
-This is a backend project built with **Express.js** and **TypeScript** that provides a RESTful API for user management and authentication. The project includes features such as user registration, login, password management, and email services, all while ensuring robust validation and error handling.
+This is a backend specimen project built with **Express.js** and **TypeScript** that provide RESTful APIs for user management and authentication. The project includes features such as user registration, login, password management, and email services, all while ensuring robust validation and error handling.
 
 ## Technologies Used
 
