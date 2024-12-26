@@ -32,8 +32,13 @@ const findAllUsers = async (query: Record<string, unknown>) => {
     .sort()
     .paginate()
     .fields();
+  const meta = await userQuery.countTotal();
   const result = await userQuery.modelQuery;
-  return result;
+
+  return {
+    result,
+    meta,
+  };
 };
 
 export const UserServices = {
