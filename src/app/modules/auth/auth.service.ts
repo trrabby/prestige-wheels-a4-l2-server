@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import bcrypt from 'bcrypt';
 import httpStatus from 'http-status';
 import jwt, { JwtPayload } from 'jsonwebtoken';
@@ -7,6 +8,26 @@ import { createToken } from './auth.utils';
 import { UserModel } from '../users/user.model';
 import AppError from '../../errorHandlers/AppError';
 import { sendEmail } from '../../utils/sendEmail';
+import { IUser } from '../users/user.interface';
+
+const registerNewUserIntoDB = async (payload: IUser) => {
+  //set default user role
+
+  payload.role = 'user';
+
+  try {
+    // create a user
+    const newUser = await UserModel.create(payload);
+    //create a student
+    if (!newUser) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
+    }
+
+    return newUser;
+  } catch (err: any) {
+    throw new Error(err);
+  }
+};
 
 const loginUser = async (payload: TLoginUser) => {
   // checking if the user is exist
@@ -56,7 +77,8 @@ const loginUser = async (payload: TLoginUser) => {
   );
 
   return {
-    accessToken,
+    accessToken: `Bearer ${accessToken}`,
+    // accessToken,
     refreshToken,
     needsPasswordChange: user?.needsPasswordChange,
   };
@@ -263,6 +285,7 @@ const resetPassword = async (
 };
 
 export const AuthServices = {
+  registerNewUserIntoDB,
   loginUser,
   changePassword,
   refreshToken,

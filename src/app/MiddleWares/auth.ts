@@ -9,7 +9,16 @@ import { UserModel } from '../modules/users/user.model';
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
+    // Bearer Token
+    const tokenWithBearer = req.headers.authorization;
+    // Extracting the token by removing "Bearer " prefix
+    let token;
+    if (tokenWithBearer) {
+      token = tokenWithBearer.split(' ')[1];
+    }
+
+    // Normal token(just for reference)
+    // const token = req.headers.authorization;
 
     // checking if the token is missing
     if (!token) {
