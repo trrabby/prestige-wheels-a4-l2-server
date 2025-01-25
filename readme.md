@@ -1,49 +1,46 @@
-# Express Backend Specimen Project
+# Car Store Backend with Express and TypeScript
 
-## Overview
-
-This is a backend specimen project built with **Express.js** and **TypeScript** that provide RESTful APIs for user management and authentication. The project includes features such as user registration, login, password management, and email services, all while ensuring robust validation and error handling.
-
-## Technologies Used
-
-- **Node.js**: JavaScript runtime for building server-side applications.
-- **Express.js**: Fast, unopinionated, minimalist web framework for Node.js.
-- **TypeScript**: A superset of JavaScript that adds static types.
-- **MongoDB**: NoSQL database for storing application data.
-- **Mongoose**: ODM (Object Data Modeling) library for MongoDB and Node.js.
-- **Zod**: TypeScript-first schema declaration and validation library.
-- **Nodemailer**: Email sending library for Node.js.
-- **bcrypt**: Library for hashing passwords.
-- **dotenv**: For managing environment variables.
-- **Nodemon**: Development tool for automatically restarting the server during development.
-- **ESLint**: Tool for identifying and fixing problems in JavaScript code.
-- **Prettier**: Code formatter for maintaining consistent style.
+This project is a Car Store API built using **Express**, **TypeScript**, and **MongoDB** with **Mongoose**. The application allows CRUD operations for managing cars and orders, provides inventory management, and calculates revenue using MongoDB aggregation.
 
 ## Features
 
-- User registration and login
-- Password management (forgot and reset password)
-- Complete error handling
-- Input validation using Zod
-- Email service integration with Nodemailer
-- CRUD operations for user management
-- Query builder for flexible database queries
-- Secure password storage using bcrypt
-- Environment configuration using `.env` files
-- Code linting and formatting with ESLint and Prettier
+- **Car Management**: Create, read, update, delete, and search for cars.
+- **Order Management**: Place orders and automatically manage car inventory.
+- **Revenue Calculation**: Calculate total revenue using MongoDB aggregation.
+- **Data Validation**: Ensure data integrity with Mongoose schema validations.
+- **Error Handling**: Generic error response for validation and server errors.
 
-## Getting Started
+---
 
-### Prerequisites
+## Project Structure
 
-- Node.js (v14 or higher)
-- MongoDB (local or cloud instance)
+````plaintext
+src/
+├── app/
+│   ├── modules/
+│   │   ├── car/
+│   │   │   ├── car.controller.ts
+│   │   │   ├── car.route.ts
+│   │   │   ├── car.service.ts
+│   │   │   ├── car.model.ts
+│   │   ├── order/
+│   │       ├── order.controller.ts
+│   │       ├── order.route.ts
+│   │       ├── order.service.ts
+│   │       ├── order.model.ts
+├── server.ts
+├── app.ts
 
-### Installation
 
-1. Clone the repository:
+## Roadmap for Running the App on Another PC
 
-   ```bash
-   git clone https://github.com/trrabby/mongoose-express-server-with-JWT-authorization.git
-   cd mongoose-express-server-with-JWT-authorization
-   ```
+Follow these steps to run the project on a new machine.
+
+### 1. Clone the Repository
+
+Start by cloning the repository to the new machine:
+
+```bash
+git clone https://github.com/trrabby/prestige-wheels-a4-l2-server.git
+cd prestige-wheels-a4-l2-server
+````
