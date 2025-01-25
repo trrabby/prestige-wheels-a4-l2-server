@@ -18,6 +18,16 @@ This project is a Car Store API built using **Express**, **TypeScript**, and **M
 src/
 ├── app/
 │   ├── modules/
+│   │   ├── auth/
+│   │   │   ├── auth.controller.ts
+│   │   │   ├── auth.route.ts
+│   │   │   ├── auth.service.ts
+│   │   │   ├── auth.model.ts
+│   │   ├── users/
+│   │   │   ├── user.controller.ts
+│   │   │   ├── user.route.ts
+│   │   │   ├── user.service.ts
+│   │   │   ├── user.model.ts
 │   │   ├── car/
 │   │   │   ├── car.controller.ts
 │   │   │   ├── car.route.ts
