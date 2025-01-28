@@ -14,11 +14,7 @@ router.post(
   carController.carCreateFun,
 );
 
-router.get(
-  '/',
-  auth(USER_ROLE.admin, USER_ROLE.user),
-  carController.getAllCarFun,
-);
+router.get('/', carController.getAllCarFun);
 
 router.patch(
   '/:id',
