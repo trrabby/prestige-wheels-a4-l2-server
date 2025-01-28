@@ -7,7 +7,7 @@ export interface IUser {
   password: string;
   needsPasswordChange: boolean;
   passwordChangedAt?: Date;
-  photoUrl?: string;
+  imgUrl?: string;
   role: 'admin' | 'user';
   isDeleted: boolean;
   status: 'active' | 'blocked';

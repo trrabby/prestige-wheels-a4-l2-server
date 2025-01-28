@@ -19,6 +19,12 @@ const userSchema = new Schema<IUser, UserModelStatic>(
       required: true,
       select: 0,
     },
+
+    imgUrl: {
+      type: String,
+      default: null,
+    },
+
     needsPasswordChange: {
       type: Boolean,
       default: true,
@@ -33,9 +39,6 @@ const userSchema = new Schema<IUser, UserModelStatic>(
       default: 'user',
     },
 
-    photoUrl: {
-      type: String,
-    },
     status: {
       type: String,
       enum: ['active', 'blocked'],
