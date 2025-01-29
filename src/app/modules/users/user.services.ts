@@ -10,7 +10,7 @@ const registerNewUserIntoDB = async (payload: IUser) => {
   //set default user role
   payload.role = 'user';
 
-  console.log(payload);
+  // console.log(payload);
 
   try {
     // create a user
