@@ -37,8 +37,8 @@ const findAllUsers = async (query: Record<string, unknown>) => {
   const result = await userQuery.modelQuery;
 
   return {
-    result,
     meta,
+    result,
   };
 };
 
