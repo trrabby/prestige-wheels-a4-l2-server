@@ -4,13 +4,14 @@ import validateRequest from '../../MiddleWares/validateRequest';
 import { carValidations } from './car.validation';
 import auth from '../../MiddleWares/auth';
 import { USER_ROLE } from '../users/user.constant';
+import { multerUpload } from '../../config/multer.config';
 
 const router = express.Router();
 
 router.post(
   '/create-car',
-  validateRequest(carValidations.carValidationSchema),
-  auth(USER_ROLE.admin, USER_ROLE.user),
+  multerUpload.single('file'),
+  auth(USER_ROLE.admin),
   carController.carCreateFun,
 );
 

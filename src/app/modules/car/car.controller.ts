@@ -4,14 +4,27 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
 import customizedMsg from '../../utils/customisedMsg';
+import validateRequest from '../../MiddleWares/validateRequest';
+import { carValidations } from './car.validation';
 
 // Function to create a new car
 
 const carCreateFun = catchAsync(async (req, res) => {
-  const payload = req.body;
-  payload['isDeleted'] = false;
+  console.log(req.body.data);
+  const data = JSON.parse(req.body.data);
+  const imgUrl = req.file?.path;
 
-  const result = await CarService.postCarDataIntoDB(payload);
+  // For debugging purposes
+
+  data['isDeleted'] = false;
+  data['inStock'] = true;
+
+  const payLoad = { ...data, imgUrl };
+  console.log(payLoad);
+
+  validateRequest(carValidations.carValidationSchema);
+
+  const result = await CarService.postCarDataIntoDB(payLoad);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

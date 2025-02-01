@@ -9,7 +9,6 @@ const carSchema = new Schema<TCar>(
     },
     model: {
       type: String,
-      unique: true,
       required: true,
     },
     year: {
@@ -28,6 +27,11 @@ const carSchema = new Schema<TCar>(
       },
       required: true,
     },
+    imgUrl: {
+      type: String,
+      required: true,
+    },
+
     description: { type: String, required: true },
     quantity: { type: Number, required: true },
     inStock: { type: Boolean, required: true },
