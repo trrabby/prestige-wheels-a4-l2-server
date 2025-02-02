@@ -19,7 +19,7 @@ const carValidationSchema = z.object({
       };
     },
   }),
-  imgUrl: z.string().min(1, { message: 'Image is required.' }),
+  imgUrl: z.array(z.string()),
   description: z.string().min(1, { message: 'Description is required.' }),
   quantity: z
     .number()

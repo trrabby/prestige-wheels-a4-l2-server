@@ -6,7 +6,7 @@ export type TCar = {
   category: string;
   description: string;
   quantity: number;
-  imgUrl: string;
+  imgUrl: [string];
   inStock: boolean;
   createdAt?: Date;
   updatedAt?: Date;

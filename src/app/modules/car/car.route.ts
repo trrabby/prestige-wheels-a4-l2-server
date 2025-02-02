@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.post(
   '/create-car',
-  multerUpload.single('file'),
+  multerUpload.array('files', 5),
   auth(USER_ROLE.admin),
   carController.carCreateFun,
 );

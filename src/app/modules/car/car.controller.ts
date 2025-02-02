@@ -10,9 +10,12 @@ import { carValidations } from './car.validation';
 // Function to create a new car
 
 const carCreateFun = catchAsync(async (req, res) => {
-  console.log(req.body.data);
+  console.log(req.files);
+
   const data = JSON.parse(req.body.data);
-  const imgUrl = req.file?.path;
+  const imgUrl = Array.isArray(req.files)
+    ? req.files.map((file) => file.path)
+    : [];
 
   // For debugging purposes
 
@@ -20,7 +23,7 @@ const carCreateFun = catchAsync(async (req, res) => {
   data['inStock'] = true;
 
   const payLoad = { ...data, imgUrl };
-  console.log(payLoad);
+  // console.log(payLoad);
 
   validateRequest(carValidations.carValidationSchema);
 

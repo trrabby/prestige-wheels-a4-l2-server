@@ -27,8 +27,9 @@ const carSchema = new Schema<TCar>(
       },
       required: true,
     },
+
     imgUrl: {
-      type: String,
+      type: [String],
       required: true,
     },
 
