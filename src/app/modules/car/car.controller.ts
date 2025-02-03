@@ -10,7 +10,7 @@ import { carValidations } from './car.validation';
 // Function to create a new car
 
 const carCreateFun = catchAsync(async (req, res) => {
-  console.log(req.files);
+  // console.log(req.files);
 
   const data = JSON.parse(req.body.data);
   const imgUrl = Array.isArray(req.files)
@@ -52,8 +52,23 @@ const getAllCarFun = catchAsync(async (req, res) => {
 
 const updateACarFun = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const payload = req.body;
-  const result = await CarService.updateACarData(id, payload);
+
+  const data = JSON.parse(req.body.data);
+
+  const imgUrl: string[] = data.previousUploadedImg || [];
+  delete data.previousUploadedImg;
+
+  const newUploadedImgUrl = Array.isArray(req.files)
+    ? req.files.map((file) => file.path)
+    : [];
+  if (newUploadedImgUrl.length > 0) {
+    imgUrl.push(...newUploadedImgUrl);
+  }
+  // console.log(imgUrl);
+
+  const payLoad = { ...data, imgUrl };
+  // console.log(payLoad);
+  const result = await CarService.updateACarData(id, payLoad);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

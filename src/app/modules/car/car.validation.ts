@@ -68,6 +68,7 @@ const carUpdateValidationSchema = z.object({
       .int({ message: 'Quantity must be an integer.' })
       .nonnegative({ message: 'Quantity cannot be negative.' })
       .optional(),
+    imgUrl: z.array(z.string()).optional(),
     inStock: z.boolean().optional(),
     createdAt: z.date().optional(),
     updatedAt: z.date().optional(),
