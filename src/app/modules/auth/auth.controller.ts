@@ -12,7 +12,6 @@ const loginUser = catchAsync(async (req, res) => {
   res.cookie('refreshToken', refreshToken, {
     secure: config.NODE_ENV === 'production',
     httpOnly: true,
-    sameSite: 'none',
   });
 
   sendResponse(res, {
@@ -21,6 +20,7 @@ const loginUser = catchAsync(async (req, res) => {
     message: 'User is logged in succesfully!',
     data: {
       accessToken,
+      refreshToken,
       needsPasswordChange,
     },
   });
@@ -41,6 +41,7 @@ const changePassword = catchAsync(async (req, res) => {
 const refreshToken = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
   // console.log(refreshToken);
+
   let token;
   if (refreshToken) {
     token = refreshToken.split(' ')[1];

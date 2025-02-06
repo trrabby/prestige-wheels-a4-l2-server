@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import bcrypt from 'bcrypt';
 import httpStatus from 'http-status';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
-import { TLoginUser } from './auth.interface';
+import { TDecodedUser, TLoginUser } from './auth.interface';
 import { createToken } from './auth.utils';
 import { UserModel } from '../users/user.model';
 import AppError from '../../errorHandlers/AppError';
@@ -121,11 +122,20 @@ const changePassword = async (
 const refreshToken = async (token: string) => {
   // checking if the given token is valid
   // console.log(token);
-  const decoded = jwt.verify(
-    token,
-    config.jwt_refresh_secret as string,
-  ) as JwtPayload;
-
+  let decoded;
+  try {
+    decoded = jwt.verify(
+      token,
+      config.jwt_refresh_secret as string,
+    ) as TDecodedUser;
+  } catch (err: any) {
+    // console.log(err);
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid token');
+  }
+  // console.log(decoded);
+  if (!decoded) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid token');
+  }
   const { email, iat } = decoded;
 
   // checking if the user is exist
@@ -170,9 +180,9 @@ const refreshToken = async (token: string) => {
     config.jwt_access_secret as string,
     config.jwt_access_expires_in as string,
   );
-
+  // console.log(refreshedAccessToken);
   return {
-    refreshedAccessToken,
+    refreshedAccessToken: `Bearer ${refreshedAccessToken}`,
   };
 };
 

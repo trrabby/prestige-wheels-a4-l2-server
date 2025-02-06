@@ -40,6 +40,7 @@ const carCreateFun = catchAsync(async (req, res) => {
 // Function to get all cars by a search term
 
 const getAllCarFun = catchAsync(async (req, res) => {
+  // console.log(req.cookies);
   const result = await CarService.getAllCars(req.query);
 
   sendResponse(res, {
