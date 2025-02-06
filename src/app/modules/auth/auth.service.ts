@@ -61,7 +61,7 @@ const loginUser = async (payload: TLoginUser) => {
   return {
     accessToken: `Bearer ${accessToken}`,
     // accessToken,
-    refreshToken,
+    refreshToken: `Bearer ${refreshToken}`,
     needsPasswordChange: user?.needsPasswordChange,
   };
 };
@@ -120,6 +120,7 @@ const changePassword = async (
 
 const refreshToken = async (token: string) => {
   // checking if the given token is valid
+  // console.log(token);
   const decoded = jwt.verify(
     token,
     config.jwt_refresh_secret as string,
@@ -160,6 +161,8 @@ const refreshToken = async (token: string) => {
   const jwtPayload = {
     email: user.email,
     role: user.role,
+    name: user.name,
+    imgUrl: user.imgUrl,
   };
 
   const refreshedAccessToken = createToken(

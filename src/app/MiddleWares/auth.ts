@@ -13,13 +13,13 @@ const auth = (...requiredRoles: TUserRole[]) => {
     // Bearer Token
     const tokenWithBearer = req.headers.authorization;
     // Extracting the token by removing "Bearer " prefix
+    // console.log(tokenWithBearer);
+
     let token;
     if (tokenWithBearer) {
       token = tokenWithBearer.split(' ')[1];
     }
-
-    // Normal token(just for reference)
-    // const token = req.headers.authorization;
+    // console.log(token);
 
     // checking if the token is missing
     if (!token) {
@@ -34,6 +34,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
         config.jwt_access_secret as string,
       ) as JwtPayload;
     } catch (err) {
+      console.log(err);
       throw new AppError(httpStatus.UNAUTHORIZED, 'Unauthorized');
     }
 

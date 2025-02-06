@@ -6,11 +6,13 @@ import { AuthServices } from './auth.service';
 
 const loginUser = catchAsync(async (req, res) => {
   const result = await AuthServices.loginUser(req.body);
+  // console.log(result);
   const { refreshToken, accessToken, needsPasswordChange } = result;
 
   res.cookie('refreshToken', refreshToken, {
     secure: config.NODE_ENV === 'production',
     httpOnly: true,
+    sameSite: 'none',
   });
 
   sendResponse(res, {
@@ -38,7 +40,13 @@ const changePassword = catchAsync(async (req, res) => {
 
 const refreshToken = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
-  const result = await AuthServices.refreshToken(refreshToken);
+  // console.log(refreshToken);
+  let token;
+  if (refreshToken) {
+    token = refreshToken.split(' ')[1];
+  }
+
+  const result = await AuthServices.refreshToken(token);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
