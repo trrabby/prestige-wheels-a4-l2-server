@@ -7,14 +7,15 @@ import customizedMsg from '../../utils/customisedMsg';
 // Function to create a new order
 const orderCreateFun = catchAsync(async (req, res) => {
   const payload = req.body;
-  payload['status'] = 'Pending';
+  payload['paymentStatus'] = 'Unpaid';
+  payload['orderStatus'] = 'Pending';
 
   const result = await OrderService.postOrderDataIntoDB(payload);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: `Car's Data created successfully`,
+    message: `Your order has been placed successfully`,
     data: result,
   });
 });
@@ -48,7 +49,7 @@ const getTotalRevenueFun = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Order's Data retrieved successfully",
+    message: 'Total revenue retrieved successfully',
     data: result,
   });
 });

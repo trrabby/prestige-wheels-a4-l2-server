@@ -2,8 +2,21 @@ import { Types } from 'mongoose';
 
 export type TOrder = {
   email: string;
-  car: Types.ObjectId;
-  quantity: number;
+  orderInfo: [
+    {
+      productId: Types.ObjectId;
+      orderedQuantity: number;
+    },
+  ];
   totalPrice: number;
-  status: string;
+  paymentStatus: string;
+  orderStatus: string;
+  customerInfo: {
+    name: string;
+    number: string;
+    city: string;
+    clolony: string;
+    postOffice: string;
+    subDistrict: string;
+  };
 };

@@ -1,20 +1,35 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 import { TOrder } from './order.interface';
 
 const OrderSchema = new Schema<TOrder>(
   {
     email: { type: String, required: true },
-    car: { type: Schema.Types.ObjectId, required: true, ref: 'Cars' },
-    quantity: { type: Number, required: true },
-    totalPrice: { type: Number, required: true },
-    status: {
-      type: String,
-      enum: {
-        values: ['Pending', 'Shipped', 'Delivered'],
-        message: `{VALUE} is not defined`,
+    orderInfo: [
+      {
+        productId: { type: Types.ObjectId, required: true, ref: 'Cars' },
+        orderedQuantity: { type: Number, required: true },
       },
+    ],
+    totalPrice: { type: Number, required: true },
+    paymentStatus: {
+      type: String,
+      enum: ['Pending', 'Paid', 'Failed', 'Unpaid'],
+      required: true,
+      default: 'Unpaid',
+    },
+    orderStatus: {
+      type: String,
+      enum: ['Pending', 'Shipped', 'Delivered', 'Canceled'],
       required: true,
       default: 'Pending',
+    },
+    customerInfo: {
+      name: { type: String, required: true },
+      number: { type: String, required: true },
+      city: { type: String, required: true },
+      clolony: { type: String, required: true },
+      postOffice: { type: String, required: true },
+      subDistrict: { type: String, required: true },
     },
   },
   {
