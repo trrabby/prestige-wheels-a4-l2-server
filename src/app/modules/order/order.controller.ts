@@ -1,8 +1,10 @@
+import { jwtDecode } from 'jwt-decode';
 import { OrderService } from './order.service';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
 import customizedMsg from '../../utils/customisedMsg';
+import { IUser } from '../users/user.interface';
 
 // Function to create a new order
 const orderCreateFun = catchAsync(async (req, res) => {
@@ -43,6 +45,19 @@ const getAnOrderFun = catchAsync(async (req, res) => {
   });
 });
 
+const updateAnOrderFun = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const payLoad = req.body;
+
+  const result = await OrderService.updateAnOrder(id, payLoad);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `Order no ${id} has been ${result?.orderStatus}`,
+    data: result,
+  });
+});
+
 const getTotalRevenueFun = catchAsync(async (req, res) => {
   const result = await OrderService.getRevenue();
 
@@ -54,9 +69,25 @@ const getTotalRevenueFun = catchAsync(async (req, res) => {
   });
 });
 
+const getMyOrdersFun = catchAsync(async (req, res) => {
+  const token = req.cookies.refreshToken.split(' ')[1];
+  const user = jwtDecode<IUser>(token);
+  console.log(user);
+  const result = await OrderService.getMyOrders(req.query, user.email);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: customizedMsg(result?.result, 'Orders'),
+    data: result,
+  });
+});
+
 export const orderController = {
   orderCreateFun,
   getAllOrdersFun,
   getAnOrderFun,
+  updateAnOrderFun,
   getTotalRevenueFun,
+  getMyOrdersFun,
 };

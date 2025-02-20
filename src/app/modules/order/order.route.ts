@@ -1,9 +1,12 @@
 import express from 'express';
 import { orderController } from './order.controller';
 import validateRequest from '../../MiddleWares/validateRequest';
-import orderValidationSchema from './order.validation';
 import auth from '../../MiddleWares/auth';
 import { USER_ROLE } from '../users/user.constant';
+import {
+  orderValidationSchema,
+  updateOrderValidationSchema,
+} from './order.validation';
 
 const router = express.Router();
 
@@ -14,7 +17,24 @@ router.post(
   orderController.orderCreateFun,
 );
 
-router.get('/', auth(USER_ROLE.admin), orderController.getAllOrdersFun);
+router.get(
+  '/',
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  orderController.getAllOrdersFun,
+);
+
+router.get(
+  '/my-orders',
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  orderController.getMyOrdersFun,
+);
+
+router.patch(
+  '/:id',
+  auth(USER_ROLE.admin),
+  validateRequest(updateOrderValidationSchema),
+  orderController.updateAnOrderFun,
+);
 
 router.get(
   '/revenue',

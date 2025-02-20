@@ -101,6 +101,14 @@ const getAnOrder = async (id: string) => {
   return result;
 };
 
+const updateAnOrder = async (id: string, payload: Partial<TOrder>) => {
+  const result = await OrderModel.findOneAndUpdate({ _id: id }, payload, {
+    new: true, // Return the updated document
+    runValidators: true, // Run schema validators
+  });
+  return result;
+};
+
 const getRevenue = async () => {
   const revenuePipeline: mongoose.PipelineStage[] = [
     { $unwind: '$orderInfo' }, // Flatten orderInfo array
@@ -168,9 +176,32 @@ const getRevenue = async () => {
   return await OrderModel.aggregate(revenuePipeline);
 };
 
+const getMyOrders = async (query: Record<string, unknown>, email: string) => {
+  const myOrdersQuery = new QueryBuilder(OrderModel.find({ email }), query)
+    .search(orderSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await myOrdersQuery.modelQuery
+    .sort({ _id: -1 })
+    .populate({
+      path: 'orderInfo.productId', // The field to populate
+      select: 'brand model year price', // Fields to select from the populated document
+    })
+    .select('-__v'); // Optionally exclude fields from the main document (e.g., exclude `__v`)
+
+  const meta = await myOrdersQuery.countTotal();
+
+  return { meta, result };
+};
+
 export const OrderService = {
   postOrderDataIntoDB,
   getAllOrders,
   getAnOrder,
+  updateAnOrder,
   getRevenue,
+  getMyOrders,
 };

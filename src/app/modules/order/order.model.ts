@@ -19,7 +19,7 @@ const OrderSchema = new Schema<TOrder>(
     },
     orderStatus: {
       type: String,
-      enum: ['Pending', 'Shipped', 'Delivered', 'Canceled'],
+      enum: ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Canceled'],
       required: true,
       default: 'Pending',
     },
