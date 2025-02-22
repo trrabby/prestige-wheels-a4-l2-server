@@ -31,7 +31,7 @@ const postOrderDataIntoDB = async (orderData: TOrder) => {
           if (carData.quantity < singleOrder.orderedQuantity) {
             throw new AppError(
               httpStatus.SERVICE_UNAVAILABLE,
-              `Ordered quantity exceeds available stock for product ID: ${singleOrder.productId}.`,
+              `Ordered quantity exceeds available stock for  ${carData.brand}, ${carData.model}. Available Stock: ${carData.quantity}`,
             );
           }
 
@@ -84,7 +84,7 @@ const getAllOrders = async (query: Record<string, unknown>) => {
     .sort({ _id: -1 })
     .populate({
       path: 'orderInfo.productId', // The field to populate
-      select: 'brand model year price', // Fields to select from the populated document
+      select: 'brand model year price imgUrl', // Fields to select from the populated document
     })
     .select('-__v'); // Optionally exclude fields from the main document (e.g., exclude `__v`)
 
@@ -96,7 +96,7 @@ const getAllOrders = async (query: Record<string, unknown>) => {
 const getAnOrder = async (id: string) => {
   const result = await OrderModel.find({ _id: id }).populate({
     path: 'orderInfo.productId', // The field to populate
-    select: 'brand model year price', // Fields to select from the populated document
+    select: 'brand model year price imgUrl', // Fields to select from the populated document
   });
   return result;
 };
