@@ -2,6 +2,7 @@ import { Types } from 'mongoose';
 
 export interface TPayment {
   tran_id: string;
+  orderNo: string;
   email: string;
   orderInfo: {
     productId: Types.ObjectId;

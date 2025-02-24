@@ -4,11 +4,13 @@ import { TPayment } from './payment.interface';
 const PaymentSchema = new Schema<TPayment>(
   {
     tran_id: { type: String, required: true, unique: true },
+    orderNo: { type: String, required: true, unique: true }, // Add orderNo field
     email: { type: String, required: true },
     orderInfo: [
       {
         productId: { type: Types.ObjectId, required: true, ref: 'Cars' },
         orderedQuantity: { type: Number, required: true },
+        _id: { type: Types.ObjectId, required: false }, // Make _id optional or handle as per requirement
       },
     ],
     totalPrice: { type: Number, required: true },
