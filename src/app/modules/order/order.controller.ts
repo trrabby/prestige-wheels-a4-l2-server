@@ -72,7 +72,7 @@ const getTotalRevenueFun = catchAsync(async (req, res) => {
 const getMyOrdersFun = catchAsync(async (req, res) => {
   const token = req.cookies.refreshToken.split(' ')[1];
   const user = jwtDecode<IUser>(token);
-  console.log(user);
+  // console.log(user);
   const result = await OrderService.getMyOrders(req.query, user.email);
 
   sendResponse(res, {
