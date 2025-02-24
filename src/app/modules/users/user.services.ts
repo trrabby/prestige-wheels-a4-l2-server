@@ -42,7 +42,29 @@ const findAllUsers = async (query: Record<string, unknown>) => {
   };
 };
 
+const updateAUser = async (id: string, payload: Partial<IUser>) => {
+  const result = await UserModel.findOneAndUpdate({ _id: id }, payload, {
+    new: true, // Return the updated document
+    runValidators: true, // Run schema validators
+  });
+  return result;
+};
+
+const deleteAUser = async (id: string) => {
+  const result = await UserModel.findOneAndUpdate(
+    { _id: id },
+    { isDeleted: true },
+    {
+      new: true, // Return the updated document
+      runValidators: true, // Run schema validators
+    },
+  );
+  return result;
+};
+
 export const UserServices = {
   registerNewUserIntoDB,
   findAllUsers,
+  updateAUser,
+  deleteAUser,
 };

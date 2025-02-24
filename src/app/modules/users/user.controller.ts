@@ -35,7 +35,33 @@ const AllUsers = catchAsync(async (req, res) => {
   });
 });
 
+const updateAUserFun = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const payLoad = req.body;
+
+  const result = await UserServices.updateAUser(id, payLoad);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `User updated successfull`,
+    data: result,
+  });
+});
+
+const deleteAUserFun = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const result = await UserServices.deleteAUser(id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `User deleted successfully`,
+    data: result,
+  });
+});
 export const UserControllers = {
   registerUser,
   AllUsers,
+  updateAUserFun,
+  deleteAUserFun,
 };

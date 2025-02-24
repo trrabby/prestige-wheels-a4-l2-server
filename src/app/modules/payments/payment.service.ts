@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import QueryBuilder from '../../builder/QueryBuilder';
 import config from '../../config';
 import sslcz from '../../utils/SSLConfig';
 import { OrderModel } from '../order/order.model';
@@ -84,16 +85,46 @@ export const processPaymentFailed = async (orderData: any) => {
   return `${config.frontend_url}/paymentFailed?order_no=${orderNo}`;
 };
 
-// Get Payment Status
-export const getPaymentStatus = async (tran_id: string) => {
-  const transaction = await PaymentModel.findOne({ tran_id });
-  if (!transaction) throw new Error('Transaction not found');
-  return transaction;
+const paymentSearchableFields = [
+  'orderNo',
+  'tran_id',
+  'paymentStatus',
+  'orderStatus',
+];
+
+const getAllPaymentData = async (query: Record<string, unknown>) => {
+  const paymentQuery = new QueryBuilder(PaymentModel.find(), query)
+    .search(paymentSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await paymentQuery.modelQuery
+    .sort({ _id: -1 })
+    .populate({
+      path: 'orderInfo.productId', // The field to populate
+      select: 'brand model year price imgUrl', // Fields to select from the populated document
+    })
+    .select('-__v'); // Optionally exclude fields from the main document (e.g., exclude `__v`)
+
+  const meta = await paymentQuery.countTotal();
+
+  return { meta, result };
+};
+
+const getAPaymentData = async (tran_id: string) => {
+  const result = await PaymentModel.find({ tran_id }).populate({
+    path: 'orderInfo.productId', // The field to populate
+    select: 'brand model year price imgUrl', // Fields to select from the populated document
+  });
+  return result;
 };
 
 export const paymentService = {
   initializePayment,
   processPaymentSuccess,
-  getPaymentStatus,
   processPaymentFailed,
+  getAllPaymentData,
+  getAPaymentData,
 };

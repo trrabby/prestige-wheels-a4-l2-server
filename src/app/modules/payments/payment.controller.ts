@@ -2,6 +2,7 @@ import { paymentService } from './payment.service';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
+import customizedMsg from '../../utils/customisedMsg';
 
 // Initialize Payment
 export const initPayment = catchAsync(async (req, res) => {
@@ -33,7 +34,32 @@ export const paymentFailed = catchAsync(async (req, res) => {
   return res.redirect(redirectUrl); // Redirect without sending JSON response
 });
 
+const getAllpaymentsFun = catchAsync(async (req, res) => {
+  const result = await paymentService.getAllPaymentData(req.query);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: customizedMsg(result?.result, 'Payments'),
+    data: result,
+  });
+});
+
+const getAPaymentFun = catchAsync(async (req, res) => {
+  const { tran_id } = req.params;
+  const result = await paymentService.getAPaymentData(tran_id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Transaction retrieved successfully',
+    data: result,
+  });
+});
+
 export const PaymentModel = {
   initPayment,
   paymentSuccess,
+  getAllpaymentsFun,
+  getAPaymentFun,
 };
