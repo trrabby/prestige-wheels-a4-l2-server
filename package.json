@@ -1,8 +1,7 @@
 {
-  "name": "assignment-2",
+  "name": "assignment-4",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "startProd": "node dist/server.js",
     "startDev": "ts-node-dev --respawn --transpile-only src/server.ts",
