@@ -16,10 +16,10 @@ export const initializePayment = async (data: any) => {
   const orderNo = data.orderData._id;
   const tran_id: string = generateTranId();
   data.tran_id = tran_id;
-  data.success_url = `${config.url}/payments/success/${orderNo}?tran_id=${tran_id}`;
-  data.fail_url = `${config.url}/payments/fail/${orderNo}`;
-  data.cancel_url = `${config.url}/payments/cancel`;
-  data.ipn_url = `${config.url}/payments/ipin`;
+  data.success_url = `${config.frontend_url}/payments/success/${orderNo}?tran_id=${tran_id}`;
+  data.fail_url = `${config.frontend_url}/payments/fail/${orderNo}`;
+  data.cancel_url = `${config.frontend_url}/payments/cancel`;
+  data.ipn_url = `${config.frontend_url}/payments/ipin`;
 
   const apiResponse = await sslcz.init(data);
   return apiResponse.GatewayPageURL;
